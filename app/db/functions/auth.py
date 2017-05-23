@@ -23,7 +23,7 @@ def delete_user(email, pw):
     
     :param email: The user's email
     :param pw: The user's password
-    :return: A success response detailing if the user was found. Otherwise a warning response
+    :return: True if the user was found and deleted. False otherwise
     """
     pass
 
@@ -60,6 +60,15 @@ def log_out(auth_key):
     """
     pass
 
+
+def clear_auth(email):
+    """
+    Eliminates a user's authentication data using their email address rather than their authentication key
+    
+    :param email: The user's email address
+    :return: True if the authentication was found and cleared successfully. False otherwise
+    """
+    pass
 
 # Queries
 
