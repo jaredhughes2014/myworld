@@ -41,7 +41,7 @@ def log_in(email, pw):
     
     :param email: The user's email address
     :param pw: The user's password
-    :return: True if the user was logged in successfully. False otherwise
+    :return: The user's authentication key if the log in was successful. None otherwise
     """
     pass
 

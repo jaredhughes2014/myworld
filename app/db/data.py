@@ -16,4 +16,6 @@ class Auth(Document):
     """
     Auth contains metadata about user's authentication. This is used to maintain timed sessions
     """
-    pass
+    key = StringField(required=True, primary_key=True)
+
+    user = ReferenceField(User(), required=True)
