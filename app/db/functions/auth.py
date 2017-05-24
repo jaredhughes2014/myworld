@@ -14,7 +14,14 @@ def create_user(email, pw):
     :param pw: The password the user wishes to use
     :return: True if the user was created successfully. False otherwise
     """
-    pass
+    user = User.objects(email=email, pw=pw).first()
+
+    if user is None:
+        user = User(email=email, pw=pw)
+        user.save()
+        return True
+    else:
+        return False
 
 
 def delete_user(email, pw):
@@ -34,18 +41,18 @@ def log_in(email, pw):
     
     :param email: The user's email address
     :param pw: The user's password
-    :return: Response containing the user's authentication key if the correct credentials are provided. Otherwise a
-    warning response
+    :return: True if the user was logged in successfully. False otherwise
     """
     pass
 
 
-def authenticate(auth_key):
+def authenticate(auth_key, email):
     """
     Refreshes a user's authentication using a previously provided authentication key. The authentication must
     not have expired in order to be refreshed
     
     :param auth_key: The user's authentication key
+    :param email: The user's email
     :return: Success response determining if the authentication was successful or not
     """
     pass

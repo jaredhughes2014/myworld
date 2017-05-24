@@ -39,11 +39,12 @@ def log_in(email, pw):
     yield None
 
 
-def authenticate(key):
+def authenticate(key, email):
     """
     Endpoint used to handle the task of authenticating a user
     
     :param key: The provided authentication key
+    :param email: The provided email address
     """
     yield None
 

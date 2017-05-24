@@ -22,15 +22,15 @@ class CreateUserTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send false to determine the user already exists
-        self.execute_operation_test(op, db.user_exists, self.email)
-        op = self.continue_endpoint(False)
+        self.assert_execute_correct(op, db.user_exists, self.email)
+        op = self.advance_endpoint(False)
 
         # Second Operation. Send true to determine a user was created successfully
-        self.execute_operation_test(op, db.create_user, self.email, self.pw)
-        op = self.continue_endpoint(True)
+        self.assert_execute_correct(op, db.create_user, self.email, self.pw)
+        op = self.advance_endpoint(True)
 
         # The operation should be successful
-        self.success_response_test(op, True)
+        self.assert_success_response(op, True)
 
     def test_user_exists(self):
         """
@@ -39,11 +39,11 @@ class CreateUserTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send true to indicate a user already exists
-        self.execute_operation_test(op, db.user_exists, self.email)
-        op = self.continue_endpoint(True)
+        self.assert_execute_correct(op, db.user_exists, self.email)
+        op = self.advance_endpoint(True)
 
         # The operation should yield a warning response
-        self.warning_response_test(op)
+        self.assert_warning_response(op)
 
 
 if __name__ == '__main__':

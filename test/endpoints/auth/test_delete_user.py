@@ -13,7 +13,7 @@ class DeleteUserTestCase(EndpointTestCase):
     def setUp(self):
         self.email = 'test@gmail.com'
         self.pw = 'testPassword'
-        self.mount_endpoint(db.delete_user, email=self.email, pw=self.pw)
+        self.mount_endpoint(delete_user, email=self.email, pw=self.pw)
 
     def test_standard_behavior(self):
         """
@@ -22,14 +22,14 @@ class DeleteUserTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send true to indicate the user's authentication was cleared successfully
-        self.execute_operation_test(op, db.clear_auth, self.email)
-        op = self.continue_endpoint(True)
+        self.assert_execute_correct(op, db.clear_auth, self.email)
+        op = self.advance_endpoint(True)
 
         # Second operation. Send true to indicate the user was deleted successfully
-        self.execute_operation_test(op, db.delete_user, self.email, self.pw)
-        op = self.continue_endpoint(True)
+        self.assert_execute_correct(op, db.delete_user, self.email, self.pw)
+        op = self.advance_endpoint(True)
 
-        self.success_response_test(op, True)
+        self.assert_success_response(op, True)
 
     def test_no_authentication(self):
         """
@@ -39,14 +39,14 @@ class DeleteUserTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send false to indicate the user is not authenticated
-        self.execute_operation_test(op, db.clear_auth, self.email)
-        op = self.continue_endpoint(False)
+        self.assert_execute_correct(op, db.clear_auth, self.email)
+        op = self.advance_endpoint(False)
 
         # Second operation. Send true to indicate the user was deleted successfully
-        self.execute_operation_test(op, db.delete_user, self.email, self.pw)
-        op = self.continue_endpoint(True)
+        self.assert_execute_correct(op, db.delete_user, self.email, self.pw)
+        op = self.advance_endpoint(True)
 
-        self.success_response_test(op, True)
+        self.assert_success_response(op, True)
 
     def test_no_user(self):
         """
@@ -56,11 +56,14 @@ class DeleteUserTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send true to indicate the user is not authenticated
-        self.execute_operation_test(op, db.clear_auth, self.email)
-        op = self.continue_endpoint(False)
+        self.assert_execute_correct(op, db.clear_auth, self.email)
+        op = self.advance_endpoint(False)
 
         # Second operation. Send false to indicate the user does not exist
-        self.execute_operation_test(op, db.delete_user, self.email, self.pw)
-        op = self.continue_endpoint(False)
+        self.assert_execute_correct(op, db.delete_user, self.email, self.pw)
+        op = self.advance_endpoint(False)
 
-        self.error_response_test(op)
+        self.assert_error_response(op)
+
+if __name__ == '__main__':
+    EndpointTestCase.main()

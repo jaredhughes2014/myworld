@@ -6,7 +6,10 @@ class User(Document):
     """
     Users contain data about the people who use this software
     """
-    pass
+
+    email = EmailField(required=True, primary_key=True)
+
+    pw = StringField(required=True)
 
 
 class Auth(Document):

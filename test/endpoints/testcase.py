@@ -25,7 +25,7 @@ class EndpointTestCase(unittest.TestCase):
         """
         return next(self.gen)
 
-    def continue_endpoint(self, data):
+    def advance_endpoint(self, data):
         """
         Continues to the next yielded value from the endpoint generator.
         
@@ -34,7 +34,7 @@ class EndpointTestCase(unittest.TestCase):
         """
         return self.gen.send(data)
 
-    def execute_operation_test(self, op, expected_method, *args):
+    def assert_execute_correct(self, op, expected_method, *args):
         """
         Utility function used to test an output execute operation. This will verify the output
         is actually an Execute operation
@@ -50,7 +50,7 @@ class EndpointTestCase(unittest.TestCase):
         for i in range(0, len(args)):
             self.assertEqual(args[i], op.args[i], 'Argument {} is not matching'.format(i))
 
-    def respond_operation_test(self, op, **kwargs):
+    def assert_respond_correct(self, op, **kwargs):
         """
         Utility function used to test an output respond operation. This will verify the output
         is actually a Respond operation. If any argument has a value of None, it is assumed that
@@ -67,7 +67,7 @@ class EndpointTestCase(unittest.TestCase):
             if value is not None:
                 self.assertEqual(value, op.data[key], 'Data for {} is not the expected value'.format(key))
 
-    def respond_operation_test_with_null(self, op, **kwargs):
+    def assert_respond_correct_with_null(self, op, **kwargs):
         """
         Utility function used to test an output respond operation. This will verify the output
         is actually a Respond operation. None values will be explicitly checked to be None
@@ -81,32 +81,32 @@ class EndpointTestCase(unittest.TestCase):
             self.assertIn(key, op.data, 'Respond operation missing expected key: {}'.format(key))
             self.assertEqual(value, op.data[key], 'Data for {} is not the expected value'.format(key))
 
-    def success_response_test(self, op, success):
+    def assert_success_response(self, op, success):
         """
         Shortcut command to test if an operation is a success response
         
         :param op: Operation to test
         :param success: True if the success outcome should be true, false otherwise
         """
-        self.respond_operation_test(op, success=success)
+        self.assert_respond_correct(op, success=success)
 
-    def warning_response_test(self, op, message=None):
+    def assert_warning_response(self, op, message=None):
         """
         Shortcut command to test if an operation is a warning message response. 
         
         :param op: Operation to test
         :param message: The expected warning message. Do not provide a message to ignore the contents of the message
         """
-        self.respond_operation_test(op, warning=message)
+        self.assert_respond_correct(op, warning=message)
 
-    def error_response_test(self, op, message=None):
+    def assert_error_response(self, op, message=None):
         """
         Shortcut command to test if an operation is an error message response. 
 
         :param op: Operation to test
         :param message: The expected error message. Do not provide a message to ignore the contents of the message
         """
-        self.respond_operation_test(op, error=message)
+        self.assert_respond_correct(op, error=message)
 
 
     @staticmethod
