@@ -2,6 +2,9 @@
 from app.db.data import User, Auth
 from app.engine.operation import *
 
+from datetime import datetime, timedelta
+
+expire_minutes=30
 
 # Modification
 
@@ -32,7 +35,13 @@ def delete_user(email, pw):
     :param pw: The user's password
     :return: True if the user was found and deleted. False otherwise
     """
-    pass
+    user = User.objects(email=email, pw=pw).first()
+
+    if user is not None:
+        user.delete()
+        return True
+    else:
+        return False
 
 
 def authenticate(email, pw):
@@ -43,7 +52,19 @@ def authenticate(email, pw):
     :param pw: The user's password
     :return: The user's authentication key if the log in was successful. None otherwise
     """
-    pass
+    user = User.objects(email=email, pw=pw).first()
+
+    if user is None:
+        return False
+
+    else:
+        key = get_auth_key(email, True)
+
+        if Auth.objects(key=key).count() == 0:
+            auth = Auth(key=key, user=user, expire_time = datetime.now() + timedelta(minutes=expire_minutes))
+            auth.save()
+
+        return key
 
 
 def validate_auth(auth_key, email):
@@ -55,7 +76,19 @@ def validate_auth(auth_key, email):
     :param email: The user's email
     :return: Success response determining if the authentication was successful or not
     """
-    pass
+    user = User.objects(email=email).first()
+
+    if user is not None:
+        auth = Auth.objects(key=auth_key, user=user).first()
+
+        if auth is not None and auth.expire_time >= datetime.now():
+            auth.expire_time = datetime.now() + timedelta(minutes=expire_minutes)
+            auth.save()
+            return True
+        else:
+            return False
+    else:
+        return False
 
 
 def clear_auth(auth_key):
