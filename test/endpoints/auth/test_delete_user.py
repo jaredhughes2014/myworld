@@ -22,7 +22,7 @@ class DeleteUserTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send true to indicate the user's authentication was cleared successfully
-        self.assert_execute_correct(op, db.clear_auth, self.email)
+        self.assert_execute_correct(op, db.log_out, self.email)
         op = self.advance_endpoint(True)
 
         # Second operation. Send true to indicate the user was deleted successfully
@@ -39,7 +39,7 @@ class DeleteUserTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send false to indicate the user is not authenticated
-        self.assert_execute_correct(op, db.clear_auth, self.email)
+        self.assert_execute_correct(op, db.log_out, self.email)
         op = self.advance_endpoint(False)
 
         # Second operation. Send true to indicate the user was deleted successfully
@@ -56,7 +56,7 @@ class DeleteUserTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send true to indicate the user is not authenticated
-        self.assert_execute_correct(op, db.clear_auth, self.email)
+        self.assert_execute_correct(op, db.log_out, self.email)
         op = self.advance_endpoint(False)
 
         # Second operation. Send false to indicate the user does not exist

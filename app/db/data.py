@@ -18,4 +18,4 @@ class Auth(Document):
     """
     key = StringField(required=True, primary_key=True)
 
-    user = ReferenceField(User(), required=True)
+    user = ReferenceField(User, required=True)

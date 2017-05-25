@@ -22,7 +22,7 @@ class LogOutTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send true to indicate the user's auth key was deactivated successfully
-        self.assert_execute_correct(op, db.log_out, self.auth_key)
+        self.assert_execute_correct(op, db.clear_auth, self.auth_key)
         op = self.advance_endpoint(True)
 
         self.assert_success_response(op, True)
@@ -34,7 +34,7 @@ class LogOutTestCase(EndpointTestCase):
         op = self.start_endpoint()
 
         # First operation. Send false to indicate the user's auth key was not deactivated
-        self.assert_execute_correct(op, db.log_out, self.auth_key)
+        self.assert_execute_correct(op, db.clear_auth, self.auth_key)
         op = self.advance_endpoint(False)
 
         self.assert_error_response(op)

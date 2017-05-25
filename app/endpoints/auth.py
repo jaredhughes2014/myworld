@@ -29,7 +29,7 @@ def delete_user(email, pw):
     yield None
 
 
-def log_in(email, pw):
+def authenticate(email, pw):
     """
     Endpoint used to handle the task of logging a user in
     
@@ -39,7 +39,7 @@ def log_in(email, pw):
     yield None
 
 
-def authenticate(key, email):
+def validate_auth(key, email):
     """
     Endpoint used to handle the task of authenticating a user
     

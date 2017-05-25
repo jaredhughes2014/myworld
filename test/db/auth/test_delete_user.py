@@ -1,6 +1,6 @@
 
 from test.db.testcase import DbTestCase
-from app.db.functions.auth import delete_user, create_user, log_in
+from app.db.functions.auth import delete_user, create_user, authenticate
 from app.db.data import User, Auth
 from mongoengine.errors import ValidationError
 
@@ -31,7 +31,7 @@ class DeleteUserTestCase(DbTestCase):
         Tests the behavior of the function when the user is currently authenticated
         """
         create_user(self.email, self.pw)
-        log_in(self.email, self.pw)
+        authenticate(self.email, self.pw)
         response = delete_user(self.email, self.pw)
 
         self.assert_not_contains(User, email=self.email, pw=self.pw)

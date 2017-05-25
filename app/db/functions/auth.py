@@ -35,7 +35,7 @@ def delete_user(email, pw):
     pass
 
 
-def log_in(email, pw):
+def authenticate(email, pw):
     """
     Begins an authentication session if the provided credentials are matched in the system
     
@@ -46,7 +46,7 @@ def log_in(email, pw):
     pass
 
 
-def authenticate(auth_key, email):
+def validate_auth(auth_key, email):
     """
     Refreshes a user's authentication using a previously provided authentication key. The authentication must
     not have expired in order to be refreshed
@@ -58,7 +58,7 @@ def authenticate(auth_key, email):
     pass
 
 
-def log_out(auth_key):
+def clear_auth(auth_key):
     """
     Terminates a user's authentication session immediately
     
@@ -68,7 +68,7 @@ def log_out(auth_key):
     pass
 
 
-def clear_auth(email):
+def log_out(email):
     """
     Eliminates a user's authentication data using their email address rather than their authentication key
     
