@@ -3,8 +3,9 @@ from app.db.data import User, Auth
 from app.engine.operation import *
 
 from datetime import datetime, timedelta
+from uuid import uuid4
 
-expire_minutes=30
+expire_minutes = 30
 
 # Modification
 
@@ -39,6 +40,11 @@ def delete_user(email, pw):
 
     if user is not None:
         user.delete()
+
+        auth = Auth.objects(user=user)
+        if auth is not None:
+            auth.delete()
+
         return True
     else:
         return False
@@ -55,13 +61,14 @@ def authenticate(email, pw):
     user = User.objects(email=email, pw=pw).first()
 
     if user is None:
-        return False
+        return None
 
     else:
         key = get_auth_key(email, True)
 
         if Auth.objects(key=key).count() == 0:
-            auth = Auth(key=key, user=user, expire_time = datetime.now() + timedelta(minutes=expire_minutes))
+            expire_time = datetime.now() + timedelta(minutes=expire_minutes)
+            auth = Auth(key=key, user=user, expire_time=expire_time)
             auth.save()
 
         return key
@@ -98,7 +105,13 @@ def clear_auth(auth_key):
     :param auth_key: The user's authentication key
     :return: Success response determining if the user was successfully logged out
     """
-    pass
+    auth = Auth.objects(key=auth_key).first()
+
+    if auth is not None:
+        auth.delete()
+        return True
+    else:
+        return False
 
 
 def log_out(email):
@@ -108,7 +121,16 @@ def log_out(email):
     :param email: The user's email address
     :return: True if the authentication was found and cleared successfully. False otherwise
     """
-    pass
+    user = User.objects(email=email).first()
+
+    if user is not None:
+        auth = Auth.objects(user=user).first()
+
+        if auth is not None:
+            auth.delete()
+            return True
+
+    return False
 
 # Queries
 
@@ -120,7 +142,7 @@ def user_exists(email):
     :param email: The user's email address
     :return: True if the user exists, or false otherwise
     """
-    return False
+    return User.objects(email=email).count() == 1
 
 
 def get_auth_key(email, generate):
@@ -131,4 +153,14 @@ def get_auth_key(email, generate):
     :param generate: If true, a new key will be generated if one does not exist
     :return: The user's authentication key if the user has one or one was generated, otherwise None
     """
+    user = User.objects(email=email).first()
+
+    if user is not None:
+        auth = Auth.objects(user=user).first()
+
+        if auth is not None:
+            return auth.key
+        else:
+            return str(uuid4()) if generate else None
+
     return None

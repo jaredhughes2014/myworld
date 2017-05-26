@@ -1,8 +1,7 @@
 
 from test.db.testcase import DbTestCase
-from app.db.functions.auth import delete_user, create_user, authenticate, validate_auth
-from app.db.data import User, Auth
-from mongoengine.errors import ValidationError
+from app.db.functions.auth import create_user, authenticate, validate_auth
+from app.db.data import Auth
 
 from uuid import uuid4
 import time
@@ -52,7 +51,7 @@ class ValidateAuthTestCase(DbTestCase):
 
         self.assert_contains_one(Auth, key=key)
         self.assertTrue(response, 'Successful updates should return true')
-        self.assertGreater(prev.expire_time, current.expire_time, 'Successful updates should increase expire time')
+        self.assertGreater(current.expire_time, prev.expire_time, 'Successful updates should increase expire time')
 
     def test_invalid_auth_key(self):
         """
@@ -95,8 +94,8 @@ class ValidateAuthTestCase(DbTestCase):
 
         time.sleep(.1)
 
-        with self.assertRaises(ValidationError):
-            validate_auth(key, self.email + '..invalidEmail')
+        response = validate_auth(key, self.email + '..invalidEmail')
+        self.assertFalse(response, 'Invalid email addresses should always return false')
 
     def test_no_authentication(self):
         """

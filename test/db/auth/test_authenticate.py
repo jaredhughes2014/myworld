@@ -2,7 +2,6 @@
 from test.db.testcase import DbTestCase
 from app.db.functions.auth import create_user, authenticate
 from app.db.data import User, Auth
-from mongoengine.errors import ValidationError
 
 
 class LogInTestCase(DbTestCase):
@@ -14,7 +13,6 @@ class LogInTestCase(DbTestCase):
         super(LogInTestCase, self).setUp()
         self.email = 'test@gmail.com'
         self.pw = 'testPassword'
-        self.user = self.get_document(User, email=self.email)
 
     def test_standard_flow(self):
         """
@@ -35,8 +33,9 @@ class LogInTestCase(DbTestCase):
         r1 = authenticate(self.email, self.pw)
         r2 = authenticate(self.email, self.pw)
 
+        user = self.get_document(User, email=self.email)
         self.assertEqual(r1, r2, 'Logging in while already authenticated returns different auth keys')
-        self.assert_email_key_exist(self.user, r2)
+        self.assert_email_key_exist(user, r2)
 
     def test_wrong_password(self):
         """
@@ -44,8 +43,9 @@ class LogInTestCase(DbTestCase):
         """
         create_user(self.email, self.pw)
         response = authenticate(self.email, self.pw + 'wrongPassword')
+        user = self.get_document(User, email=self.email)
 
-        self.assert_not_contains(Auth, key=response, user=self.user)
+        self.assert_not_contains(Auth, key=response, user=user)
         self.assertIsNone(response, 'Unsuccessful login attempts should return None')
 
     def test_user_does_not_exist(self):
@@ -53,12 +53,11 @@ class LogInTestCase(DbTestCase):
         Tests the behavior of the method when the user does not exist
         """
         create_user(self.email, self.pw)
-        email = 'wrongEmail' + self.email
-
-        response = authenticate(email, self.pw)
+        response = authenticate('incorrectEmail' + self.email, self.pw)
+        user = self.get_document(User, email=self.email)
 
         self.assertIsNone(response, 'Unsuccessful login attempts should return None')
-        self.assert_not_contains(Auth, user=self.user)
+        self.assert_not_contains(Auth, user=user)
 
     def test_no_users(self):
         """
@@ -67,15 +66,13 @@ class LogInTestCase(DbTestCase):
         response = authenticate(self.email, self.pw)
 
         self.assertIsNone(response, 'Unsuccessful login attempts should return None')
-        self.assert_not_contains(Auth, user=self.user)
 
     def test_non_email(self):
         """
         Tests the behavior of the method when the user uses a non-email string as an email
         """
-        create_user(self.email, self.pw)
-        with self.assertRaises(ValidationError):
-            authenticate(self.email + '..notAnEmailAddress', self.pw)
+        response = authenticate(self.email + '..notAnEmailAddress', self.pw)
+        self.assertIsNone(response, 'Invalid email addresses should always return None')
 
     def assert_email_key_exist(self, user, key):
         """

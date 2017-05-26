@@ -26,11 +26,12 @@ class UserExistsTestCase(DbTestCase):
         Tests the behavior of the function when the user does not exist
         """
         create_user(self.email, self.pw)
-        self.assertTrue(user_exists('wrongEmail' + self.email), 'Query should return true if the user does exist')
+        self.assertFalse(user_exists('wrongEmail' + self.email), 'Query should return true if the user does exist')
 
     def test_non_email(self):
         """
         Tests the behavior of the function when a non email address is used
         """
-        with self.assertRaises(ValidationError):
-            user_exists(self.email + '..invalidEmail')
+        response = user_exists(self.email + '..invalidEmail')
+
+        self.assertFalse(response, 'Return should always be false with an invalid email')

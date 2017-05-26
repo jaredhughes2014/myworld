@@ -66,8 +66,9 @@ class LogOutTestCase(DbTestCase):
         """
         Tests the method using a non-email formatted email address
         """
-        with self.assertRaises(ValidationError):
-            log_out(self.email + '..notAnEmail')
+        response = log_out(self.email + '..notAnEmail')
+
+        self.assertFalse(response, 'Invalid emails should always return False')
 
 
 if __name__ == '__main__':

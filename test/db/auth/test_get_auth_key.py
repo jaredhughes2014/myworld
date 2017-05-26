@@ -44,9 +44,9 @@ class GetAuthKeyTestCase(DbTestCase):
         a key
         """
         create_user(self.email, self.pw)
+        response = get_auth_key(self.email + '..invalidEmail', True)
 
-        with self.assertRaises(ValidationError):
-            get_auth_key(self.email + '..invalidEmail', True)
+        self.assertIsNone(response, 'Key should always be None if the user does not exist')
 
     def test_non_email_no_generate(self):
         """
@@ -54,9 +54,9 @@ class GetAuthKeyTestCase(DbTestCase):
         a key
         """
         create_user(self.email, self.pw)
+        response = get_auth_key(self.email + '..invalidEmail', False)
 
-        with self.assertRaises(ValidationError):
-            get_auth_key(self.email + '..invalidEmail', False)
+        self.assertIsNone(response, 'Key should always be None if the user does not exist')
 
     def test_generate_already_authenticated(self):
         """
