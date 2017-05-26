@@ -6,7 +6,7 @@ import app.db.functions.auth as db
 from uuid import uuid4
 
 
-class LogInTestCase(EndpointTestCase):
+class AuthenticateTestCase(EndpointTestCase):
     """
     Tests the behavior of the log in endpoint
     """
@@ -43,8 +43,8 @@ class LogInTestCase(EndpointTestCase):
         """
         op = self.start_endpoint()
 
-        # First Operation. Send false to indicate the user provided invalid credentials
-        self.assert_execute_correct(op, db.get_auth_key, self.email, self.pw)
+        # First Operation. Send false to indicate the user gave bad credentials
+        self.assert_execute_correct(op, db.user_exists, self.email, self.pw)
         op = self.advance_endpoint(False)
 
         self.assert_error_response(op)
